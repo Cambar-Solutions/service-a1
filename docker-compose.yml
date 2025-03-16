@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb-container
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    volumes:
+      - mongo_data:/data/db
+
+  service-a1:
+    build: .
+    container_name: service-a1
+    ports:
+      - "4000:4000"
+    depends_on:
+      - mongodb
+    environment:
+      PORT: 4000
+      MONGO_URI: mongodb://admin:secret@mongodb:27017/service-a1?authSource=admin
+      CLOUDFLARE_R2_ACCESS_KEY: 69770f6e5394b26574825942edaac65b
+      CLOUDFLARE_R2_SECRET_KEY: 4f084dfa57375f60cc5acd34f10325c1095cdaf422bb82850422e3b792b2fadc
+      CLOUDFLARE_R2_BUCKET_NAME: global-storage
+      CLOUDFLARE_R2_ENDPOINT: https://f2fe0c030af34be51000e1b6170c97d3.r2.cloudflarestorage.com
+
+volumes:
+  mongo_data:
